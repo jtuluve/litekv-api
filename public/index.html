@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Key-Value Store API</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: rgb(23, 23, 23);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        color: white;
+        padding: 40px 0;
+      }
+
+      header h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .card h2 {
+        color: #4a5568;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+      }
+
+      .route {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-left: 4px solid #667eea;
+        background: #f8fafc;
+        border-radius: 5px;
+      }
+
+      .route-path {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: #2d3748;
+        font-size: 1rem;
+      }
+
+      .route-description {
+        color: #718096;
+        margin-top: 5px;
+        font-size: 0.9rem;
+      }
+
+      .testing-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .input-group label {
+        font-weight: 600;
+        color: #4a5568;
+      }
+
+      input[type='text'],
+      select {
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type='text']:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-secondary {
+        background: #e2e8f0;
+        color: #4a5568;
+      }
+
+      .btn-secondary:hover {
+        background: #cbd5e0;
+      }
+
+      .result-area {
+        background: #1a202c;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        min-height: 150px;
+        overflow-x: auto;
+        margin-top: 15px;
+      }
+
+      .demoResponse {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        color: #333;
+        margin-top: 10px;
+      }
+
+      .url-display {
+        background: #f7fafc;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        font-family: 'Courier New', monospace;
+        word-break: break-all;
+        margin-top: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+
+        header h1 {
+          font-size: 2rem;
+        }
+
+        .button-group {
+          flex-direction: column;
+        }
+
+        button {
+          flex: none;
+        }
+      }
+
+      .success {
+        color: #38a169;
+      }
+
+      .error {
+        color: #e53e3e;
+      }
+
+      .loading {
+        color: #3182ce;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Key-Value Store API</h1>
+        <p>
+          A simple, fast, and reliable key-value storage service where all
+          routes use GET and return plain text responses.
+        </p>
+      </header>
+
+      <div class="main-content">
+        <div class="card">
+          <h2>📚 API Routes</h2>
+
+          <div class="route">
+            <div class="route-path">GET /api/createApp</div>
+            <div class="route-description">
+              Creates a new application and returns an App ID
+            </div>
+            <p>Example Response:</p>
+            <div class="demoResponse">4ac14727-4b3d-5dce-740b-a0a7c7dd1c29</div>
+          </div>
+
+          <div class="route">
+            <div class="route-path">GET /api/exists/[APPID]</div>
+            <div class="route-description">
+              Checks if an application exists (returns boolean)
+            </div>
+            <p>Example Response:</p>
+            <div class="demoResponse">true</div>
+          </div>
+
+          <div class="route">
+            <div class="route-path">GET /api/setVal/[APPID]/[KEY]/[VAL]</div>
+            <div class="route-description">
+              Sets a key-value pair in the application (returns boolean)
+            </div>
+            <p>Example Response:</p>
+            <div class="demoResponse">true</div>
+          </div>
+
+          <div class="route">
+            <div class="route-path">GET /api/getVal/[APPID]/[KEY]</div>
+            <div class="route-description">
+              Gets the value for a key (returns string, empty if not found)
+            </div>
+            <p>Example Response:</p>
+            <div class="demoResponse">myValue</div>
+          </div>
+
+          <div class="route">
+            <div class="route-path">GET /api/inc/[APPID]/[KEY]</div>
+            <div class="route-description">
+              Increments the numeric value of a key by 1 (returns boolean)
+            </div>
+            <p>Example Response:</p>
+            <div class="demoResponse">true</div>
+            <p style="font-size: 12px; color:red;">⚠️ Warning: If the value stored is string, it will be parsed. And if it produces NaN, the default value will be taken(0) & then incremented.(result=1)</p>
+          </div>
+
+          <div class="route">
+            <div class="route-path">GET /api/dec/[APPID]/[KEY]</div>
+            <div class="route-description">
+              Decrements the numeric value of a key by 1 (returns boolean)
+            </div>
+            <p>Example Response:</p>
+            <div class="demoResponse">true</div>
+            <p style="font-size: 12px; color:red;">⚠️ Warning: If the value stored is string, it will be parsed. And if it produces NaN, the default value will be taken(0) & then decremented.(result=-1)</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🧪 API Tester</h2>
+
+          <div class="testing-section">
+            <div class="input-group">
+              <label for="appId">App ID:</label>
+              <input
+                type="text"
+                id="appId"
+                placeholder="Enter your App ID (or create new)"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="operation">Operation:</label>
+              <select id="operation">
+                <option value="createApp">Create New App</option>
+                <option value="exists">Check App Exists</option>
+                <option value="getVal">Get Value</option>
+                <option value="setVal">Set Value</option>
+                <option value="inc">Increment</option>
+                <option value="dec">Decrement</option>
+              </select>
+            </div>
+
+            <div class="input-group" id="keyGroup" style="display: none">
+              <label for="key">Key:</label>
+              <input type="text" id="key" placeholder="Enter key name" />
+            </div>
+
+            <div class="input-group" id="valueGroup" style="display: none">
+              <label for="value">Value:</label>
+              <input type="text" id="value" placeholder="Enter value" />
+            </div>
+
+            <div class="button-group">
+              <button class="btn-primary" onclick="executeRequest()">
+                Execute Request
+              </button>
+              <button class="btn-secondary" onclick="clearResults()">
+                Clear Results
+              </button>
+            </div>
+
+            <div class="url-display" id="urlDisplay">
+              URL will appear here...
+            </div>
+
+            <div class="result-area" id="results">
+              Results will appear here...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentAppId = '';
+
+      // Update UI based on selected operation
+      document
+        .getElementById('operation')
+        .addEventListener('change', function () {
+          const operation = this.value;
+          const keyGroup = document.getElementById('keyGroup');
+          const valueGroup = document.getElementById('valueGroup');
+
+          // Reset visibility
+          keyGroup.style.display = 'none';
+          valueGroup.style.display = 'none';
+
+          // Show relevant fields based on operation
+          if (['getVal', 'setVal', 'inc', 'dec'].includes(operation)) {
+            keyGroup.style.display = 'block';
+          }
+
+          if (operation === 'setVal') {
+            valueGroup.style.display = 'block';
+          }
+
+          updateURL();
+        });
+
+      // Update URL display when inputs change
+      ['appId', 'key', 'value'].forEach((id) => {
+        document.getElementById(id).addEventListener('input', updateURL);
+      });
+
+      function updateURL() {
+        const operation = document.getElementById('operation').value;
+        const appId = document.getElementById('appId').value;
+        const key = document.getElementById('key').value;
+        const value = document.getElementById('value').value;
+
+        let url = '';
+        let method = 'GET';
+
+        switch (operation) {
+          case 'createApp':
+            url = '/api/createApp';
+            method = 'GET';
+            break;
+          case 'exists':
+            url = appId ? `/api/exists/${appId}` : '/api/exists/[APPID]';
+            break;
+          case 'getVal':
+            url =
+              appId && key
+                ? `/api/getVal/${appId}/${key}`
+                : '/api/getVal/[APPID]/[KEY]';
+            break;
+          case 'setVal':
+            url =
+              appId && key && value
+                ? `/api/setVal/${appId}/${key}/${value}`
+                : '/api/setVal/[APPID]/[KEY]/[VAL]';
+            method = 'GET';
+            break;
+          case 'inc':
+            url =
+              appId && key
+                ? `/api/inc/${appId}/${key}`
+                : '/api/inc/[APPID]/[KEY]';
+            method = 'GET';
+            break;
+          case 'dec':
+            url =
+              appId && key
+                ? `/api/dec/${appId}/${key}`
+                : '/api/dec/[APPID]/[KEY]';
+            method = 'GET';
+            break;
+        }
+
+        document.getElementById('urlDisplay').textContent = `${method} ${url}`;
+      }
+
+      async function executeRequest() {
+        const operation = document.getElementById('operation').value;
+        const appId = document.getElementById('appId').value;
+        const key = document.getElementById('key').value;
+        const value = document.getElementById('value').value;
+        const results = document.getElementById('results');
+
+        // Validate inputs
+        if (operation !== 'createApp' && !appId) {
+          results.innerHTML =
+            '<span class="error">❌ App ID is required for this operation</span>';
+          return;
+        }
+
+        if (['getVal', 'setVal', 'inc', 'dec'].includes(operation) && !key) {
+          results.innerHTML =
+            '<span class="error">❌ Key is required for this operation</span>';
+          return;
+        }
+
+        if (operation === 'setVal' && !value) {
+          results.innerHTML =
+            '<span class="error">❌ Value is required for setVal operation</span>';
+          return;
+        }
+
+        // Build URL
+        let url = '';
+        let method = 'GET';
+
+        switch (operation) {
+          case 'createApp':
+            url = '/api/createApp';
+            method = 'GET';
+            break;
+          case 'exists':
+            url = `/api/exists/${appId}`;
+            break;
+          case 'getVal':
+            url = `/api/getVal/${appId}/${key}`;
+            break;
+          case 'setVal':
+            url = `/api/setVal/${appId}/${key}/${value}`;
+            method = 'GET';
+            break;
+          case 'inc':
+            url = `/api/inc/${appId}/${key}`;
+            method = 'GET';
+            break;
+          case 'dec':
+            url = `/api/dec/${appId}/${key}`;
+            method = 'GET';
+            break;
+        }
+
+        // Show loading
+        results.innerHTML =
+          '<span class="loading">🔄 Executing request...</span>';
+
+        try {
+          const response = await fetch(url, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const data = await response.text();
+
+          if (response.ok) {
+            results.innerHTML = `<span class="success">✅ Success (${response.status})</span>\n\n${data}`;
+
+            // If creating app, update app ID field
+            if (operation === 'createApp') {
+              try {
+                const jsonData = JSON.parse(data);
+                if (jsonData.appId) {
+                  document.getElementById('appId').value = jsonData.appId;
+                  currentAppId = jsonData.appId;
+                }
+              } catch (e) {
+                // If response is just the app ID string
+                if (data.length < 50 && !data.includes(' ')) {
+                  document.getElementById('appId').value = data;
+                  currentAppId = data;
+                }
+              }
+            }
+          } else {
+            results.innerHTML = `<span class="error">❌ Error (${response.status})</span>\n\n${data}`;
+          }
+        } catch (error) {
+          results.innerHTML = `<span class="error">❌ Network Error</span>\n\n${error.message}`;
+        }
+      }
+
+      function clearResults() {
+        document.getElementById('results').textContent =
+          'Results will appear here...';
+      }
+
+      // Initialize
+      updateURL();
+    </script>
+  </body>
+</html>
