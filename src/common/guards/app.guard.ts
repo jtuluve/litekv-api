@@ -18,7 +18,7 @@ export class AppGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest<Request>();
-    const appId = request.params.appid;
+    const appId = request.params?.appid;
     if (!appId) {
       throw new ForbiddenException('App ID is required');
     }

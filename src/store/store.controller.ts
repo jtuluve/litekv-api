@@ -1,12 +1,14 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { AppGuard } from 'src/common/guards/app.guard';
+import { KeyGuard } from 'src/common/guards/key.guard';
 
 @Controller()
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
   @UseGuards(AppGuard)
+  @UseGuards(KeyGuard)
   @Get('api/getVal/:appid/:key')
   async getVal(
     @Param('appid') appId: string,
@@ -17,6 +19,7 @@ export class StoreController {
   }
 
   @UseGuards(AppGuard)
+  @UseGuards(KeyGuard)
   @Get(['api/setVal/:appid/:key/:value', 'api/setVal/:appid/:key'])
   async setVal(
     @Param('appid') appId: string,
@@ -27,20 +30,24 @@ export class StoreController {
   }
 
   @UseGuards(AppGuard)
-  @Get('api/inc/:appid/:key')
+  @UseGuards(KeyGuard)
+  @Get(['api/inc/:appid/:key', 'api/inc/:appid/:key/:value'])
   async incVal(
     @Param('appid') appId: string,
     @Param('key') key: string,
+    @Param('value') value?: string,
   ): Promise<boolean> {
-    return await this.storeService.incVal(appId, key);
+    return await this.storeService.incVal(appId, key, value);
   }
 
   @UseGuards(AppGuard)
-  @Get('api/dec/:appid/:key')
+  @UseGuards(KeyGuard)
+  @Get(['api/dec/:appid/:key', 'api/dec/:appid/:key/:value'])
   async decVal(
     @Param('appid') appId: string,
     @Param('key') key: string,
+    @Param('value') value?: string,
   ): Promise<boolean> {
-    return this.storeService.decVal(appId, key);
+    return this.storeService.decVal(appId, key, value);
   }
 }

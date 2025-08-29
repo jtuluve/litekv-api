@@ -19,30 +19,30 @@ export class StoreService {
     return !!(
       await this.AppModel.updateOne(
         { appid: appId },
-        { [key]: value ?? '' },
+        value ? { [key]: value } : { $unset: { [key]: '' } },
       ).lean()
-    ).modifiedCount;
+    ).matchedCount;
   }
 
-  async incVal(appId: string, key: string): Promise<boolean> {
+  async incVal(appId: string, key: string, value?: string): Promise<boolean> {
     const doc = await this.AppModel.findOne({ appid: appId }).lean();
     const current = Number(doc?.[key] ?? 0) || 0;
     const res = await this.AppModel.updateOne(
       { appid: appId },
-      { $set: { [key]: current + 1 } },
+      { $set: { [key]: current + (Number(value) || 1) } },
     ).lean();
 
-    return !!res.modifiedCount;
+    return !!res.matchedCount;
   }
 
-  async decVal(appId: string, key: string) {
+  async decVal(appId: string, key: string, value?: string) {
     const doc = await this.AppModel.findOne({ appid: appId }).lean();
     const current = Number(doc?.[key] ?? 0);
     const res = await this.AppModel.updateOne(
       { appid: appId },
-      { $set: { [key]: current - 1 } },
+      { $set: { [key]: current - (Number(value) || 1) } },
     ).lean();
 
-    return !!res.modifiedCount;
+    return !!res.matchedCount;
   }
 }
