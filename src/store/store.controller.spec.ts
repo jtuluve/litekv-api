@@ -18,6 +18,10 @@ describe('StoreController', () => {
       canActivate: jest.fn(),
     };
 
+    const mockKeyGuardImpl = {
+      canActivate: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [StoreController],
       providers: [
@@ -33,6 +37,8 @@ describe('StoreController', () => {
     })
       .overrideGuard(AppGuard)
       .useValue(mockAppGuardImpl)
+      .overrideGuard('KeyGuard')
+      .useValue(mockKeyGuardImpl)
       .compile();
 
     controller = module.get<StoreController>(StoreController);
@@ -111,7 +117,11 @@ describe('StoreController', () => {
 
       const result = await controller.incVal(appId, key);
 
-      expect(mockStoreService.incVal).toHaveBeenCalledWith(appId, key);
+      expect(mockStoreService.incVal).toHaveBeenCalledWith(
+        appId,
+        key,
+        undefined,
+      );
       expect(result).toBe(true);
     });
 
@@ -123,7 +133,11 @@ describe('StoreController', () => {
 
       const result = await controller.incVal(appId, key);
 
-      expect(mockStoreService.incVal).toHaveBeenCalledWith(appId, key);
+      expect(mockStoreService.incVal).toHaveBeenCalledWith(
+        appId,
+        key,
+        undefined,
+      );
       expect(result).toBe(false);
     });
   });
@@ -137,7 +151,11 @@ describe('StoreController', () => {
 
       const result = await controller.decVal(appId, key);
 
-      expect(mockStoreService.decVal).toHaveBeenCalledWith(appId, key);
+      expect(mockStoreService.decVal).toHaveBeenCalledWith(
+        appId,
+        key,
+        undefined,
+      );
       expect(result).toBe(true);
     });
 
@@ -149,7 +167,11 @@ describe('StoreController', () => {
 
       const result = await controller.decVal(appId, key);
 
-      expect(mockStoreService.decVal).toHaveBeenCalledWith(appId, key);
+      expect(mockStoreService.decVal).toHaveBeenCalledWith(
+        appId,
+        key,
+        undefined,
+      );
       expect(result).toBe(false);
     });
   });

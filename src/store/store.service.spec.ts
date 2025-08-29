@@ -93,7 +93,7 @@ describe('StoreService', () => {
       const value = 'testValue';
 
       const mockQuery = {
-        lean: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+        lean: jest.fn().mockResolvedValue({ matchedCount: 1 }),
       };
       mockModel.updateOne.mockReturnValue(mockQuery as any);
 
@@ -107,12 +107,12 @@ describe('StoreService', () => {
       expect(result).toBe(true);
     });
 
-    it('should set empty string when value is undefined', async () => {
+    it('should unset value when value is undefined', async () => {
       const appId = 'test123';
       const key = 'testKey';
 
       const mockQuery = {
-        lean: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+        lean: jest.fn().mockResolvedValue({ matchedCount: 1 }),
       };
       mockModel.updateOne.mockReturnValue(mockQuery as any);
 
@@ -120,7 +120,7 @@ describe('StoreService', () => {
 
       expect(mockModel.updateOne).toHaveBeenCalledWith(
         { appid: appId },
-        { [key]: '' },
+        { $unset: { [key]: '' } },
       );
       expect(result).toBe(true);
     });
@@ -131,7 +131,7 @@ describe('StoreService', () => {
       const value = 'testValue';
 
       const mockQuery = {
-        lean: jest.fn().mockResolvedValue({ modifiedCount: 0 }),
+        lean: jest.fn().mockResolvedValue({ matchedCount: 0 }),
       };
       mockModel.updateOne.mockReturnValue(mockQuery as any);
 
@@ -151,7 +151,7 @@ describe('StoreService', () => {
         lean: jest.fn().mockResolvedValue({ [key]: currentValue }),
       };
       const mockUpdateQuery = {
-        lean: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+        lean: jest.fn().mockResolvedValue({ matchedCount: 1 }),
       };
 
       mockModel.findOne.mockReturnValue(mockFindQuery as any);
@@ -175,7 +175,7 @@ describe('StoreService', () => {
         lean: jest.fn().mockResolvedValue({}),
       };
       const mockUpdateQuery = {
-        lean: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+        lean: jest.fn().mockResolvedValue({ matchedCount: 1 }),
       };
 
       mockModel.findOne.mockReturnValue(mockFindQuery as any);
@@ -201,7 +201,7 @@ describe('StoreService', () => {
         lean: jest.fn().mockResolvedValue({ [key]: currentValue }),
       };
       const mockUpdateQuery = {
-        lean: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+        lean: jest.fn().mockResolvedValue({ matchedCount: 1 }),
       };
 
       mockModel.findOne.mockReturnValue(mockFindQuery as any);
@@ -225,7 +225,7 @@ describe('StoreService', () => {
         lean: jest.fn().mockResolvedValue({}),
       };
       const mockUpdateQuery = {
-        lean: jest.fn().mockResolvedValue({ modifiedCount: 1 }),
+        lean: jest.fn().mockResolvedValue({ matchedCount: 1 }),
       };
 
       mockModel.findOne.mockReturnValue(mockFindQuery as any);
