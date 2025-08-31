@@ -2,6 +2,15 @@
 
 Simple REST API for storing and retrieving key-value pairs. Every route returns text and every route is GET.
 
+
+## Usage
+
+1. Create an app to get an App ID from [https://litekv-api.onrender.com](https://litekv-api.onrender.com)
+2. Use the App ID to store/retrieve values
+3. Use `inc`/`dec` for counters
+
+That's it!
+
 ## API Endpoints
 
 ### Create App
@@ -11,14 +20,6 @@ GET /api/createApp
 ```
 
 Returns a new App ID as plain text.
-
-### Check App Exists
-
-```curl
-GET /api/exists/{APPID}
-```
-
-Returns `true` if app exists, `false` otherwise.
 
 ### Get Value
 
@@ -32,6 +33,16 @@ Returns the value as plain text. Returns empty string if not found.
 
 ```curl
 GET /api/setVal/{APPID}/{KEY}/{VALUE}
+```
+
+Returns `true` if successful, `false` otherwise.
+
+### Delete Value
+
+To delete a value, simply call setVal without value.
+
+```curl
+GET /api/setVal/{APPID}/{KEY}
 ```
 
 Returns `true` if successful, `false` otherwise.
@@ -67,20 +78,7 @@ curl /api/setVal/abc123/counter/5
 curl /api/inc/abc123/counter
 # Returns: true
 
-# Get the value (clears it)
+# Get the value
 curl /api/getVal/abc123/counter
 # Returns: 6
-
-# Try to get it again
-curl /api/getVal/abc123/counter
-# Returns: false
 ```
-
-## Usage
-
-1. Create an app to get an App ID
-2. Use the App ID to store/retrieve values
-3. Values are cleared after reading with `getVal`
-4. Use `inc`/`dec` for counters
-
-That's it!
