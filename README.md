@@ -11,6 +11,13 @@ Simple REST API for storing and retrieving key-value pairs. Every route returns 
 
 That's it!
 
+> [!Tip]
+> Use the [LiteKV](https://www.npmjs.org/package/litekv) library to easily access the api in a js environment.
+
+
+> [!Warning]
+> The api has global ratelimit. If you want to avoid it, you are free to host a copy of this api by yourself.
+
 ## API Endpoints
 
 ### Create App
