@@ -5,7 +5,7 @@ Simple REST API for storing and retrieving key-value pairs. Every route returns 
 
 ## Usage
 
-1. Create an app to get an App ID from [https://litekv-api.onrender.com](https://litekv-api.onrender.com)
+1. Create an app to get an App ID from [https://litekv-api-production.up.railway.app/](https://litekv-api-production.up.railway.app/)
 2. Use the App ID to store/retrieve values
 3. Use `inc`/`dec` for counters
 
