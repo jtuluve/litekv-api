@@ -1,7 +1,7 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { StoreService } from './store.service';
-import { AppGuard } from 'src/common/guards/app.guard';
-import { KeyGuard } from 'src/common/guards/key.guard';
+import { AppGuard } from '../common/guards/app.guard';
+import { KeyGuard } from '../common/guards/key.guard';
 
 @Controller()
 export class StoreController {
