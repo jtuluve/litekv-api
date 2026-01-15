@@ -8,7 +8,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model } from 'mongoose';
-import { App, AppDocument } from '../schemas/app.schema';
+import { App, AppDocument } from '../../schemas/app.schema';
 
 @Injectable()
 export class AppGuard implements CanActivate {
